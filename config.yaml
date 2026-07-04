@@ -1,0 +1,55 @@
+# config.yaml — change this file to run on a different dataset
+# All relative paths are resolved against the repo root.
+
+paths:
+  images_dir: "data/all_images"
+  labels_dir: "data/all_labels"
+  predictions_file: "data/predictions.jsonl"
+  output_dir: "data/output"
+
+prefilter:
+  size:
+    max_kb: 5
+  dimensions:
+    motorbike:
+      metric: "height"
+      percentile_max: 2
+    others:
+      metric: "width"
+      percentile_max: 5
+
+quality:
+  enabled:
+    - brightness
+    - contrast
+    - laplacian_blur
+    - dark_pixel_ratio
+    - bright_pixel_ratio
+    - file_size
+
+inference:
+  yolo:
+    model: "weights/yolo26/yolo26n_ft2_motorcycles.pth"
+    conf_threshold: 0.25
+    device: "auto"
+  ocr:
+    model: "weights/SVTRv2/anpr_finetune_9_best_375.pth"
+    dict_path: "weights/SVTRv2/EN_symbol_dict.txt"
+    device: "auto"
+
+clustering:
+  embedding:
+    model: "facebook/dinov2-base"
+    batch_size: 64
+    device: "auto"
+  pca:
+    variance_threshold: 0.80
+  kmeans:
+    k: 400
+    seed: 42
+
+review:
+  grid_rows: 5
+  grid_cols: 5
+  cluster_labels_file: "data/output/cluster_labels.json"
+  combined_labels_file: "data/output/combined_labels.json"
