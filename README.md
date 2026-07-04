@@ -86,8 +86,50 @@ Edit `config.yaml` to switch datasets. See [INDEX.md](INDEX.md) for the full scr
 
 ## Repo Layout
 
-- `anpr/` — Shared core (models, checksum, config loader)
-- `scripts/` — Pipeline stages (runnable independently)
-- `descriptors/` — Image quality descriptor modules
-- `config.yaml` — All paths and thresholds
-- `run_pipeline.py` — Orchestrator
+```
+data-curation-pipeline/
+├── config.yaml                 # all paths and thresholds — change this per dataset
+├── README.md                   # this file
+├── INDEX.md                    # every script, what it reads, what it writes
+├── requirements.txt            # frozen Python dependencies
+├── run_pipeline.py             # optional orchestrator (--skip, --only, --start)
+├── anpr/                       # shared core (dataset-independent)
+│   ├── config.py               # load_config() — reads config.yaml, resolves paths
+│   ├── checksum.py             # SG plate checksum logic
+│   ├── utils.py                # image loading, JSON I/O, ensure_dir
+│   ├── pipeline.py             # end-to-end detect → OCR inference
+│   ├── models/
+│   │   ├── _types.py           # BoundingBox, DetectionResult, OcrResult (pydantic)
+│   │   ├── yolo.py             # YOLOv26 detector wrapper (config-integrated)
+│   │   ├── yolo26/             # YOLOv26 model implementation
+│   │   ├── svtr.py             # SVTRv2 OCR wrapper (config-integrated)
+│   │   ├── svtrv2/             # SVTRv2 model implementation
+│   │   └── dinov2.py           # DINOv2 embedding extractor
+│   └── post_process/
+│       ├── checksum_recovery.py
+│       └── lta_checksum.py
+├── descriptors/                # quality descriptor modules (reusable)
+│   ├── brightness.py
+│   ├── contrast.py
+│   ├── laplacian_blur.py
+│   ├── dark_pixel_ratio.py
+│   ├── bright_pixel_ratio.py
+│   └── file_size.py
+├── scripts/                    # pipeline stages (runnable independently)
+│   ├── 01_prefilter_size.py
+│   ├── 02_prefilter_dimensions.py
+│   ├── 03_compute_quality.py
+│   ├── 04_analyze_quality.py
+│   ├── 05_run_inference.py
+│   ├── 06_build_labels.py
+│   ├── 07_extract_embeddings.py
+│   ├── 08_cluster.py
+│   ├── 09_cluster_review_gui.py
+│   └── 10_quality_review_gui.py
+├── weights/                    # (gitignored) model weights
+│   └── README.md               # expected layout documentation
+└── data/                       # (gitignored contents) images, labels, outputs
+    ├── all_images/             # plate crop images (.jpg)
+    ├── all_labels/             # JSON metadata files (.json)
+    └── output/                 # pipeline writes all artifacts here
+```
