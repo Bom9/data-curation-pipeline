@@ -1,4 +1,5 @@
-weights/
+weights/*
+!weights/README.md
 data/
 .venv/
 __pycache__/
