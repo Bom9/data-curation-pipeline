@@ -46,6 +46,34 @@ python scripts/02_prefilter_dimensions.py
 ...
 ```
 
+## Data Preparation
+
+### Images (`data/all_images/`)
+
+Plain `.jpg` plate crop images. Filename stem must match the label JSON stem (e.g. `sr_2760_rid_1488717_origin_img_3_crop0.jpg`).
+
+### Labels (`data/all_labels/`)
+
+One `.json` per image. Script 02 (dimension prefilter) reads `crop_info.sam3` for vehicle bounding box and class. Required structure:
+
+```json
+{
+  "crop_info": {
+    "sam3": {
+      "original_vehicle_bbox": [x1, y1, x2, y2],
+      "predicted_class": "motorbike" | "others"
+    }
+  }
+}
+```
+
+| Field | Type | Required by | Description |
+|---|---|---|---|
+| `crop_info.sam3.original_vehicle_bbox` | `[int, int, int, int]` | Script 02 | Vehicle bounding box `[x1, y1, x2, y2]` in original frame pixels |
+| `crop_info.sam3.predicted_class` | `str` | Script 02 | `"motorbike"` or `"others"` — determines which dimension metric to apply |
+
+If labels lack these fields, script 02 simply skips that image (no crash). Scripts 03, 05, 07 do not read labels at all — they only need images.
+
 ## Requirements
 
 - Python 3.11+
