@@ -1,6 +1,8 @@
 weights/*
 !weights/README.md
-data/
+data/**/*
+!data/**/.gitkeep
+!data/.gitkeep
 .venv/
 __pycache__/
 *.py[codz]
