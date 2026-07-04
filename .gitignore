@@ -1,0 +1,7 @@
+weights/
+data/
+.venv/
+__pycache__/
+*.py[codz]
+.DS_Store
+CLAUDE.md
